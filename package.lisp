@@ -1,4 +1,5 @@
 ;;;; package.lisp
 
 (defpackage #:toor
-  (:use #:cl))
+  (:use #:cl)
+  (:export :main))
