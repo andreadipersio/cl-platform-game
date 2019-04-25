@@ -2,27 +2,6 @@
 
 (in-package #:toor)
 
-(defvar *command-thread-name* "Command Thread")
-(defvar *command-queue* '())
-(defvar *command-queue-lock* (bt:make-lock))
-
-(defun command-pop ()
-  (bt:with-lock-held (*command-queue-lock*)
-    (pop *command-queue*)))
-
-(defun command-push (cmd)
-  (bt:with-lock-held (*command-queue-lock*)
-    (setf *command-queue* (cons cmd *command-queue*))))
-
-(defun command-thread ()
-  (loop
-     (let ((cmd (command-pop)))
-       (eval cmd)
-       (sdl2:delay 2000))))
-
-(defun create-command-thread ()
-  (bt:make-thread 'command-thread :name *command-thread-name*))
-
 (defun test ()
   (cl-ecs:add-entity nil
 	      (coords :x 10 :y 20)
