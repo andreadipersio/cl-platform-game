@@ -13,4 +13,5 @@
 	       :graph)
   :components ((:file "package")
                (:file "toor")
+	       (:file "time")
 	       (:file "ecs")))
