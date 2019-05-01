@@ -6,6 +6,9 @@
 (cl-ecs:defcomponent visibility (w h rgba))
 (cl-ecs:defcomponent velocity (x y))
 
+(defun reset-ecs ()
+  (mapcar #'cl-ecs:remove-entity (cl-ecs:all-entities)))
+
 (defun init-movement-sys (current-game-time)
   (cl-ecs:defsys movement ((coords velocity) (e))
     (let* ((delta-time (game-time-delta current-game-time))

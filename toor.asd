@@ -10,7 +10,8 @@
 	       :bordeaux-threads
 	       :usocket
 	       :cl-ecs
-	       :graph)
+	       :graph
+	       :livesupport)
   :components ((:file "package")
                (:file "toor")
 	       (:file "time")
