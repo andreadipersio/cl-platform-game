@@ -12,6 +12,7 @@
 	       :cl-ecs
 	       :graph
 	       :livesupport)
+  :pathname "src"
   :components ((:file "package")
                (:file "toor")
 	       (:file "time")
