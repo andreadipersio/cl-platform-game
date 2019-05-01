@@ -7,6 +7,7 @@
   :version "0.0.1"
   :serial t
   :depends-on (:sdl2
+	       :sdl2-image
 	       :bordeaux-threads
 	       :usocket
 	       :cl-ecs

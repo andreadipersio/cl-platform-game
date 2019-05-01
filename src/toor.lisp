@@ -4,6 +4,16 @@
 
 (defparameter *player-entity* nil)
 
+(defparameter *background-filepath* (asdf:system-relative-pathname 'toor "assets/bg-100.png"))
+(defparameter *background-surface* (sdl2-image:load-image *background-filepath*))
+(defparameter *background-texture* nil)
+
+(defun init-textures (renderer)
+  (setq *background-texture* (sdl2:create-texture-from-surface renderer *background-surface*)))
+
+(defun render-background (renderer)
+  (sdl2:render-copy renderer *background-texture*))
+
 (defun test ()
   (let ((player-entity
 	 (cl-ecs:add-entity nil
@@ -61,19 +71,22 @@
      (update-game-time current-game-time)
      (sdl2:set-render-draw-color renderer 0 0 0 255)
      (sdl2:render-clear renderer)
+     (render-background renderer)
      (cl-ecs:do-system 'movement)
      (cl-ecs:do-system 'render)
      (sdl2:render-present renderer)
-     (sdl2:delay 5))
+     (sdl2:delay 1))
     (:quit () t)))
 
 (defun main ()
   (reset-ecs)
   (test)
+  (sdl2-image:init '(:png))
   (let ((current-game-time (make-game-time)))
     (sdl2:with-init (:everything)
       (sdl2:with-window (win :title "Toor" :flags '(:shown))
 	(sdl2:with-renderer (renderer win :flags '(:accelerated))
 	  (init-movement-sys current-game-time)
 	  (init-render-sys renderer)
+	  (init-textures renderer)
 	  (continuable (game-loop current-game-time renderer)))))))
