@@ -17,4 +17,5 @@
   :components ((:file "package")
                (:file "toor")
 	       (:file "time")
-	       (:file "ecs")))
+	       (:file "ecs")
+	       (:file "camera")))
