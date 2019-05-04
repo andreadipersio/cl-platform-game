@@ -88,7 +88,7 @@
     (sdl2:with-init (:everything)
       (sdl2:with-window (win :title "Toor" :flags '(:shown))
 	(sdl2:with-renderer (renderer win :flags '(:accelerated))
-	  (init-movement-sys game-time)
+	  (init-movement-sys game-time *level-1*)
 	  (init-camera-sys renderer camera *level-1*)
 	  (init-render-sys renderer camera)
 	  (init-textures renderer)

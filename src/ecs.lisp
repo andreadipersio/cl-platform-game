@@ -10,13 +10,24 @@
 (defun reset-ecs ()
   (mapcar #'cl-ecs:remove-entity (cl-ecs:all-entities)))
 
-(defun init-movement-sys (game-time)
+(defun init-movement-sys (game-time level)
   (cl-ecs:defsys movement ((coords velocity) (e))
     (let* ((delta-time (game-time-delta game-time))
 	   (velocity-x (* (velocity/x e) delta-time))
 	   (velocity-y (* (velocity/y e) delta-time))
 	   (new-x (+ (coords/x e) velocity-x))
-	   (new-y (+ (coords/y e) velocity-y)))
+	   (new-y (+ (coords/y e) velocity-y))
+	   (width (visibility/w e))
+	   (height (visibility/h e)))
+
+      ;; Prevent entity to move out of a level
+      (when (or (minusp new-x)
+		(> (+ new-x (if width width 0))
+		   (level-width level))) (decf new-x velocity-x))
+      (when (or (minusp new-y)
+		(> (+ new-y (if height height 0))
+		   (level-height level))) (decf new-y velocity-y))
+
       (setf (coords/x e) new-x)
       (setf (coords/y e) new-y))))
 
