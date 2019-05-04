@@ -29,10 +29,10 @@
     (setq *player-entity* player-entity)
     (format t "*player-entity* is ~A~%" *player-entity*)))
 
-(defun print-fps (current-game-time)
+(defun print-fps (game-time)
   (format t "delta-time ~A fps ~A~%"
-	  (game-time-delta current-game-time)
-	  (fps current-game-time)))
+	  (game-time-delta game-time)
+	  (fps game-time)))
 
 (defun move-entity (direction entity)
   (cond
@@ -50,14 +50,14 @@
     ((member :x axis) (setf (velocity/x entity) 0))
     ((member :y axis) (setf (velocity/y entity) 0))))
 
-(defun game-loop (current-game-time renderer)
+(defun game-loop (game-time renderer)
   (sdl2:with-event-loop (:method :poll)
     (:keydown (:keysym keysym)
 	      (when (sdl2:keyboard-state-p :scancode-w) (move-entity :top *player-entity*))
 	      (when (sdl2:keyboard-state-p :scancode-a) (move-entity :right *player-entity*))
 	      (when (sdl2:keyboard-state-p :scancode-s) (move-entity :bottom *player-entity*))
 	      (when (sdl2:keyboard-state-p :scancode-d) (move-entity :left *player-entity*))
-	      (when (sdl2:keyboard-state-p :scancode-i) (print-fps current-game-time)))
+	      (when (sdl2:keyboard-state-p :scancode-i) (print-fps game-time)))
 
     (:keyup (:keysym keysym)
 	    (when (not (or
@@ -69,7 +69,7 @@
 
     (:idle
      ()
-     (update-game-time current-game-time)
+     (update-game-time game-time)
      (sdl2:set-render-draw-color renderer 0 0 0 255)
      (sdl2:render-clear renderer)
      (cl-ecs:do-system 'movement)
@@ -83,13 +83,13 @@
   (reset-ecs)
   (test)
   (sdl2-image:init '(:png))
-  (let ((current-game-time (make-game-time))
+  (let ((game-time (make-game-time))
 	(camera (make-camera)))
     (sdl2:with-init (:everything)
       (sdl2:with-window (win :title "Toor" :flags '(:shown))
 	(sdl2:with-renderer (renderer win :flags '(:accelerated))
-	  (init-movement-sys current-game-time)
+	  (init-movement-sys game-time)
 	  (init-camera-sys renderer camera *level-1*)
 	  (init-render-sys renderer camera)
 	  (init-textures renderer)
-	  (continuable (game-loop current-game-time renderer)))))))
+	  (continuable (game-loop game-time renderer)))))))

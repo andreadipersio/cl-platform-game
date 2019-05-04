@@ -10,9 +10,9 @@
 (defun reset-ecs ()
   (mapcar #'cl-ecs:remove-entity (cl-ecs:all-entities)))
 
-(defun init-movement-sys (current-game-time)
+(defun init-movement-sys (game-time)
   (cl-ecs:defsys movement ((coords velocity) (e))
-    (let* ((delta-time (game-time-delta current-game-time))
+    (let* ((delta-time (game-time-delta game-time))
 	   (velocity-x (* (velocity/x e) delta-time))
 	   (velocity-y (* (velocity/y e) delta-time))
 	   (new-x (+ (coords/x e) velocity-x))
