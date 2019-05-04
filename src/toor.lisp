@@ -20,12 +20,19 @@
 	   (player)
 	   (coords :x 10 :y 0)
 	   (visibility :w 100 :h 100 :rgba '(255 255 0 1))
-	   (velocity :x 0 :y 0)))
+	   (velocity :x 0 :y 0)
+	   (collision-behaviour :behaviour :stop)))
 	(npc-entity
 	 (cl-ecs:add-entity nil
 	   (coords :x 0 :y 400)
 	   (visibility :w 120 :h 90 :rgba '(255 0 0 1))
-	   (velocity :x 0.1 :y 0))))
+	   (velocity :x 0.1 :y 0)
+	   (collision-behaviour :behaviour :stop)))
+	(wall-entity
+	 (cl-ecs:add-entity nil
+	   (coords :x 400 :y 200)
+	   (visibility :w 20 :h 400 :rgba '(255 255 0 1))
+	   (collision-behaviour :behaviour :stop))))
     (setq *player-entity* player-entity)
     (format t "*player-entity* is ~A~%" *player-entity*)))
 
@@ -73,7 +80,8 @@
      (sdl2:set-render-draw-color renderer 0 0 0 255)
      (sdl2:render-clear renderer)
      (cl-ecs:do-system 'movement)
-     (cl-ecs:do-system 'camera)     
+     (cl-ecs:do-system 'collision)
+     (cl-ecs:do-system 'camera)
      (cl-ecs:do-system 'render)
      (sdl2:render-present renderer)
      (sdl2:delay 1))
@@ -89,6 +97,7 @@
       (sdl2:with-window (win :title "Toor" :flags '(:shown))
 	(sdl2:with-renderer (renderer win :flags '(:accelerated))
 	  (init-movement-sys game-time *level-1*)
+	  (init-collision-sys game-time)
 	  (init-camera-sys renderer camera *level-1*)
 	  (init-render-sys renderer camera)
 	  (init-textures renderer)

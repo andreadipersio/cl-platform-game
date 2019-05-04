@@ -7,14 +7,24 @@
   (height 600))
 
 (defstruct level
-  (width (* 800 3))
-  (height 600))
+  (width (* 800 2))
+  (height 800))
 
 (defstruct rect
   (x 0)
   (y 0)
   (width 0)
   (height 0))
+
+(defun rect-collision-p (rect1 rect2)
+  (let ((rect1-x-side (+ (rect-x rect1) (rect-width rect1)))
+	(rect2-x-side (+ (rect-x rect2) (rect-width rect2)))
+	(rect1-y-side (+ (rect-y rect1) (rect-height rect1)))
+	(rect2-y-side (+ (rect-y rect2) (rect-height rect2))))
+    (and (>= rect1-x-side (rect-x rect2))
+	 (<= (rect-x rect1) rect2-x-side)
+	 (>= rect1-y-side (rect-y rect2))
+	 (<= (rect-y rect1) rect2-y-side))))
 
 (defun make-rect-from-entity (e)
   (make-rect :x (coords/x e)
