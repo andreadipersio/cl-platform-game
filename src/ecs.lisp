@@ -8,6 +8,11 @@
 (cl-ecs:defcomponent player ())
 (cl-ecs:defcomponent collision-behaviour (behaviour))
 
+(cl-ecs:defcomponent animation (width height row-size index key frame time))
+
+(defparameter *player-animation-index* '(:run (8 13)
+					 :still (0 0)))
+
 (defun reset-ecs ()
   (mapcar #'cl-ecs:remove-entity (cl-ecs:all-entities)))
 
@@ -34,6 +39,25 @@
       (setf (coords/x e) new-x)
       (setf (coords/y e) new-y))))
 
+(defun init-animation-sys (game-time)
+    (cl-ecs:defsys animation ((animation) (e))
+      (let* ((index (getf (animation/index e) (animation/key e)))
+	     (current-frame (animation/frame e))
+	     (first-frame (first index))
+	     (last-frame (second index)))
+	(when (>= (animation/time e) 100)
+	  (decf (animation/time e) 100)
+	  (incf (animation/frame e))
+	  (when (< (animation/frame e) first-frame) (setf (animation/frame e) first-frame))
+	  (when (> (animation/frame e) last-frame) (setf (animation/frame e) first-frame)))
+	(incf (animation/time e))
+	(format t "Action ~A Frame ~A (~A to ~A) t ~A ~%"
+		(animation/key e)
+		(animation/frame e)
+		first-frame
+		last-frame
+		(animation/time e)))))
+
 (defun init-collision-sys (game-time)
   (cl-ecs:defsys collision ((coords collision-behaviour) (e1 e2))
     (let ((delta-time (game-time-delta game-time))
@@ -58,8 +82,31 @@
 (defun init-render-sys (renderer camera)
   (cl-ecs:defsys render ((coords visibility) (e))
     (apply #'sdl2:set-render-draw-color (cons renderer (visibility/rgba e)))
-    (let ((x (truncate (- (coords/x e) (camera-x camera))))
-	  (y (truncate (- (coords/y e) (camera-y camera))))
-	  (w (visibility/w e))
-	  (h (visibility/h e)))
-      (sdl2:render-draw-rect renderer (sdl2:make-rect x y w h)))))
+    (let* ((x (truncate (- (coords/x e) (camera-x camera))))
+	   (y (truncate (- (coords/y e) (camera-y camera))))
+	   (w (visibility/w e))
+	   (h (visibility/h e))
+	   (sdl-rect (sdl2:make-rect x y w h)))
+
+      ;;
+      ;; crappy animation routine
+      ;;
+      (if (animation/frame e)
+	  (let* ((a-frame (animation/frame e))
+		 (a-width (animation/width e))
+		 (a-height (animation/height e))
+		 (a-row-size (animation/row-size e))
+		 (a-row (values (truncate (/ a-frame a-row-size))))
+		 (a-col (values (mod a-frame a-row-size)))
+		 (a-x-offset (* a-col a-width))
+		 (a-y-offset (* a-row a-height)))
+	    (format t "x ~A y ~A row ~A~%" a-x-offset a-y-offset a-row)
+	    (sdl2:render-copy renderer *player-texture*
+			      :source-rect (sdl2:make-rect
+					    a-x-offset
+					    a-y-offset
+					    (animation/width e)
+					    (animation/height e))
+			      :dest-rect sdl-rect))
+
+	  (sdl2:render-draw-rect renderer (sdl2:make-rect x y w h))))))

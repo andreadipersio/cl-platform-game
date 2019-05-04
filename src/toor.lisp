@@ -8,8 +8,14 @@
 (defparameter *background-surface* (sdl2-image:load-image *background-filepath*))
 (defparameter *background-texture* nil)
 
+(defparameter *player-filepath* (asdf:system-relative-pathname 'toor "assets/player-sheet.png"))
+(defparameter *player-surface* (sdl2-image:load-image *player-filepath*))
+(defparameter *player-texture* nil)
+
 (defun init-textures (renderer)
-  (setq *background-texture* (sdl2:create-texture-from-surface renderer *background-surface*)))
+  (format t "loading textures...~%")
+  (setq *background-texture* (sdl2:create-texture-from-surface renderer *background-surface*))
+  (setq *player-texture* (sdl2:create-texture-from-surface renderer *player-surface*)))
 
 (defun render-background (renderer)
   (sdl2:render-copy renderer *background-texture*))
@@ -19,9 +25,16 @@
 	 (cl-ecs:add-entity nil
 	   (player)
 	   (coords :x 10 :y 0)
-	   (visibility :w 100 :h 100 :rgba '(255 255 0 1))
+	   (visibility :w 200 :h 158 :rgba '(255 255 0 1))
 	   (velocity :x 0 :y 0)
-	   (collision-behaviour :behaviour :stop)))
+	   (collision-behaviour :behaviour :stop)
+	   (animation :index *player-animation-index*
+		      :key :still
+		      :width 50
+		      :height 37
+		      :row-size 7
+		      :frame 0
+		      :time 0)))
 	(npc-entity
 	 (cl-ecs:add-entity nil
 	   (coords :x 0 :y 400)
@@ -42,6 +55,7 @@
 	  (fps game-time)))
 
 (defun move-entity (direction entity)
+  (when (animation/index entity) (setf (animation/key entity) :run))
   (cond
     ((eq direction :top)
      (setf (velocity/y entity) -0.5))
@@ -53,6 +67,7 @@
      (setf (velocity/x entity) -0.5))))
 
 (defun reset-movement (entity &rest axis)
+  (when (animation/index entity) (setf (animation/key entity) :still))
   (cond
     ((member :x axis) (setf (velocity/x entity) 0))
     ((member :y axis) (setf (velocity/y entity) 0))))
@@ -81,6 +96,7 @@
      (sdl2:render-clear renderer)
      (cl-ecs:do-system 'movement)
      (cl-ecs:do-system 'collision)
+     (cl-ecs:do-system 'animation)
      (cl-ecs:do-system 'camera)
      (cl-ecs:do-system 'render)
      (sdl2:render-present renderer)
@@ -98,6 +114,7 @@
 	(sdl2:with-renderer (renderer win :flags '(:accelerated))
 	  (init-movement-sys game-time *level-1*)
 	  (init-collision-sys game-time)
+	  (init-animation-sys game-time)
 	  (init-camera-sys renderer camera *level-1*)
 	  (init-render-sys renderer camera)
 	  (init-textures renderer)
