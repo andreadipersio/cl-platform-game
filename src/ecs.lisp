@@ -45,7 +45,7 @@
 	     (current-frame (animation/frame e))
 	     (first-frame (first index))
 	     (last-frame (second index))
-	     (wait-time (third index)))
+	     (wait-time (truncate (/ (third index) (game-time-delta game-time)))))
 	(when (>= (animation/time e) wait-time)
 	  (decf (animation/time e) wait-time)
 	  (if (or (< (animation/frame e) first-frame)
