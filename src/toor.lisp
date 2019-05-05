@@ -24,7 +24,7 @@
   (let ((player-entity
 	 (cl-ecs:add-entity nil
 	   (player)
-	   (coords :x 10 :y 0)
+	   (coords :x 10 :y 600)
 	   (visibility :w 200 :h 158 :rgba '(255 255 0 1))
 	   (velocity :x 0 :y 0)
 	   (collision-behaviour :behaviour :stop)
@@ -37,14 +37,14 @@
 		      :time 0)))
 	(npc-entity
 	 (cl-ecs:add-entity nil
-	   (coords :x 0 :y 400)
+	   (coords :x 0 :y 300)
 	   (visibility :w 120 :h 90 :rgba '(255 0 0 1))
 	   (velocity :x 0.1 :y 0)
 	   (collision-behaviour :behaviour :stop)))
 	(wall-entity
 	 (cl-ecs:add-entity nil
 	   (coords :x 400 :y 200)
-	   (visibility :w 20 :h 400 :rgba '(255 255 0 1))
+	   (visibility :w 20 :h 200 :rgba '(255 255 0 1))
 	   (collision-behaviour :behaviour :stop))))
     (setq *player-entity* player-entity)
     (format t "*player-entity* is ~A~%" *player-entity*)))
@@ -72,6 +72,9 @@
     ((member :x axis) (setf (velocity/x entity) 0))
     ((member :y axis) (setf (velocity/y entity) 0))))
 
+(defun primary-attack (entity)
+  (setf (animation/key entity) :primary-attack))
+
 (defun game-loop (game-time renderer)
   (sdl2:with-event-loop (:method :poll)
     (:keydown (:keysym keysym)
@@ -79,7 +82,8 @@
 	      (when (sdl2:keyboard-state-p :scancode-a) (move-entity :right *player-entity*))
 	      (when (sdl2:keyboard-state-p :scancode-s) (move-entity :bottom *player-entity*))
 	      (when (sdl2:keyboard-state-p :scancode-d) (move-entity :left *player-entity*))
-	      (when (sdl2:keyboard-state-p :scancode-i) (print-fps game-time)))
+	      (when (sdl2:keyboard-state-p :scancode-i) (print-fps game-time))
+	      (when (sdl2:keyboard-state-p :scancode-space) (primary-attack *player-entity*)))
 
     (:keyup (:keysym keysym)
 	    (when (not (or

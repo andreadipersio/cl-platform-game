@@ -10,9 +10,9 @@
 
 (cl-ecs:defcomponent animation (width height row-size index key frame time))
 
-(defparameter *player-animation-index* '(:run (8 13)
-					 :still (0 0)))
-
+(defparameter *player-animation-index* '(:run (8 13 100)
+					 :still (0 0 0)
+					 :primary-attack (42 46 100)))
 (defun reset-ecs ()
   (mapcar #'cl-ecs:remove-entity (cl-ecs:all-entities)))
 
@@ -44,19 +44,15 @@
       (let* ((index (getf (animation/index e) (animation/key e)))
 	     (current-frame (animation/frame e))
 	     (first-frame (first index))
-	     (last-frame (second index)))
-	(when (>= (animation/time e) 100)
-	  (decf (animation/time e) 100)
-	  (incf (animation/frame e))
-	  (when (< (animation/frame e) first-frame) (setf (animation/frame e) first-frame))
-	  (when (> (animation/frame e) last-frame) (setf (animation/frame e) first-frame)))
-	(incf (animation/time e))
-	(format t "Action ~A Frame ~A (~A to ~A) t ~A ~%"
-		(animation/key e)
-		(animation/frame e)
-		first-frame
-		last-frame
-		(animation/time e)))))
+	     (last-frame (second index))
+	     (wait-time (third index)))
+	(when (>= (animation/time e) wait-time)
+	  (decf (animation/time e) wait-time)
+	  (if (or (< (animation/frame e) first-frame)
+		  (> (animation/frame e) last-frame))
+	      (setf (animation/frame e) first-frame)
+	      (when (> last-frame first-frame) (incf (animation/frame e)))))
+	(incf (animation/time e)))))
 
 (defun init-collision-sys (game-time)
   (cl-ecs:defsys collision ((coords collision-behaviour) (e1 e2))
@@ -97,10 +93,9 @@
 		 (a-height (animation/height e))
 		 (a-row-size (animation/row-size e))
 		 (a-row (values (truncate (/ a-frame a-row-size))))
-		 (a-col (values (mod a-frame a-row-size)))
+		 (a-col (mod a-frame a-row-size))
 		 (a-x-offset (* a-col a-width))
 		 (a-y-offset (* a-row a-height)))
-	    (format t "x ~A y ~A row ~A~%" a-x-offset a-y-offset a-row)
 	    (sdl2:render-copy renderer *player-texture*
 			      :source-rect (sdl2:make-rect
 					    a-x-offset
