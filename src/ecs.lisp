@@ -8,7 +8,7 @@
 (cl-ecs:defcomponent player ())
 (cl-ecs:defcomponent collision-behaviour (behaviour))
 
-(cl-ecs:defcomponent animation (width height row-size index key frame time))
+(cl-ecs:defcomponent animation (width height row-size index key frame time flip))
 
 (defparameter *player-animation-index* '(:run (8 13 100)
 					 :still (0 0 0)
@@ -95,13 +95,17 @@
 		 (a-row (values (truncate (/ a-frame a-row-size))))
 		 (a-col (mod a-frame a-row-size))
 		 (a-x-offset (* a-col a-width))
-		 (a-y-offset (* a-row a-height)))
-	    (sdl2:render-copy renderer *player-texture*
+		 (a-y-offset (* a-row a-height))
+		 (flip (cond ((not (animation/flip e)) '(0))
+			     ((eql (animation/flip e) :x) '(1))
+			     ((eql (animation/flip e) :y) '(2)))))
+	    (sdl2:render-copy-ex renderer *player-texture*
 			      :source-rect (sdl2:make-rect
 					    a-x-offset
 					    a-y-offset
 					    (animation/width e)
 					    (animation/height e))
-			      :dest-rect sdl-rect))
+			      :dest-rect sdl-rect
+			      :flip flip))
 
 	  (sdl2:render-draw-rect renderer (sdl2:make-rect x y w h))))))
