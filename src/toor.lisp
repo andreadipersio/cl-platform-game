@@ -125,3 +125,6 @@
 	  (init-render-sys renderer camera)
 	  (init-textures renderer)
 	  (continuable (game-loop game-time renderer)))))))
+
+(defun main-osx ()
+  (sdl2:make-this-thread-main #'main))
