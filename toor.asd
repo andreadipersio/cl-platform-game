@@ -18,4 +18,7 @@
                (:file "toor")
 	       (:file "time")
 	       (:file "ecs")
-	       (:file "camera")))
+	       (:file "camera")
+	       (:file "animation")
+	       (:file "animation-assets")
+	       (:file "animation-helper")))
