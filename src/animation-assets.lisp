@@ -3,7 +3,7 @@
 (in-package #:toor)
 
 (defparameter *animation-sheets*
-  (list (list :player (make-animation-sheet
+  (list (list :player (make-spritesheet
 		       :filepath (asdf:system-relative-pathname 'toor "assets/player-sheet.png")
 		       :width 50
 		       :height 37

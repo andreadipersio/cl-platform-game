@@ -2,7 +2,7 @@
 
 (in-package #:toor)
 
-(defstruct animation-sheet
+(defstruct spritesheet
   filepath
   sdl-texture
   width
@@ -20,19 +20,19 @@
   time
   flip)
 
-(defun load-animation-sheet (renderer sheet)
-  (let* ((sdl-surface (sdl2-image:load-image (animation-sheet-filepath sheet)))
+(defun load-spritesheet (renderer sheet)
+  (let* ((sdl-surface (sdl2-image:load-image (spritesheet-filepath sheet)))
 	 (sdl-texture (sdl2:create-texture-from-surface renderer sdl-surface)))
-    (format t "loading animation sheet: ~S~%" (animation-sheet-filepath sheet))
-    (setf (animation-sheet-sdl-texture sheet) sdl-texture)))
+    (format t "loading spritesheet: ~S~%" (spritesheet-filepath sheet))
+    (setf (spritesheet-sdl-texture sheet) sdl-texture)))
 
-(defun preload-animation-sheets (renderer sheets)
-  (mapc (lambda (sheet-alist) (load-animation-sheet renderer (cadr sheet-alist))) sheets))
+(defun preload-spritesheets (renderer sheets)
+  (mapc (lambda (sheet-alist) (load-spritesheet renderer (cadr sheet-alist))) sheets))
 
 (defun animation-sdl-rect (sheet frame sequence)
-  (let* ((a-width (animation-sheet-width sheet))
-	 (a-height (animation-sheet-height sheet))
-	 (a-row-size (animation-sheet-frames-per-row sheet))
+  (let* ((a-width (spritesheet-width sheet))
+	 (a-height (spritesheet-height sheet))
+	 (a-row-size (spritesheet-frames-per-row sheet))
 	 (a-row (values (truncate (/ frame a-row-size))))
 	 (a-col (mod frame a-row-size))
 	 (a-x-offset (* a-col a-width))

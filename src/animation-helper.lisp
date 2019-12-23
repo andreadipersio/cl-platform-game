@@ -3,11 +3,11 @@
 (in-package #:toor)
 
 (defun animation-helper-draw (win renderer sheet sequence)
-  (let* ((sdl-texture (animation-sheet-sdl-texture sheet))
+  (let* ((sdl-texture (spritesheet-sdl-texture sheet))
 	 (texture-w (sdl2:texture-width sdl-texture))
 	 (texture-h (sdl2:texture-height sdl-texture)))
     (sdl2:set-window-size win texture-w texture-h)
-    (sdl2:render-copy renderer (animation-sheet-sdl-texture sheet))
+    (sdl2:render-copy renderer (spritesheet-sdl-texture sheet))
     (sdl2:set-render-draw-color renderer 255 255 255 100)
 
     (let ((first-frame (animation-sequence-first-frame sequence))
@@ -32,7 +32,7 @@
       (sdl2:with-window (win :title "Animation Helper" :flags '(:shown))
 	(sdl2:with-renderer (renderer win :flags '(:accelerated))
 	  (continuable
-	    (preload-animation-sheets renderer sheets)
+	    (preload-spritesheets renderer sheets)
 	    (let ((sheet (funcall sheets-iterator))
 		  (sequence (funcall sequences-iterator)))
 
