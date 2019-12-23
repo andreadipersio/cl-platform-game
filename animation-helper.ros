@@ -1,0 +1,18 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(toor) :silent t))
+
+(in-package toor)
+
+(defun run-animation-helper ()
+  (animation-helper *animation-sheets* *player-animation-sequences*))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (sdl2:make-this-thread-main #'run-animation-helper))
+;;; vim: set ft=lisp lisp:

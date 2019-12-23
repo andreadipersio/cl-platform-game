@@ -1,0 +1,13 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '(toor) :silent t))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (sdl2:make-this-thread-main #'toor:main))
+;;; vim: set ft=lisp lisp:
