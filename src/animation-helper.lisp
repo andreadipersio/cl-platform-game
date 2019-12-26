@@ -1,6 +1,6 @@
 ;;;; animation-helper.lisp
 
-(in-package #:toor)
+(in-package #:cl-platform-game)
 
 (defun animation-helper-draw (win renderer sheet sequence)
   (let* ((sdl-texture (spritesheet-sdl-texture sheet))

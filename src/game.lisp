@@ -1,14 +1,12 @@
-;;;; toor.lisp
-
-(in-package #:toor)
+(in-package #:cl-platform-game)
 
 (defparameter *player-entity* nil)
 
-(defparameter *background-filepath* (asdf:system-relative-pathname 'toor "assets/bg-100.png"))
+(defparameter *background-filepath* (asdf:system-relative-pathname 'cl-platform-game "assets/bg-100.png"))
 (defparameter *background-surface* (sdl2-image:load-image *background-filepath*))
 (defparameter *background-texture* nil)
 
-(defparameter *player-filepath* (asdf:system-relative-pathname 'toor "assets/player-sheet.png"))
+(defparameter *player-filepath* (asdf:system-relative-pathname 'cl-platform-game "assets/player-sheet.png"))
 (defparameter *player-surface* (sdl2-image:load-image *player-filepath*))
 (defparameter *player-texture* nil)
 
@@ -116,7 +114,7 @@
   (let ((game-time (make-game-time))
 	(camera (make-camera)))
     (sdl2:with-init (:everything)
-      (sdl2:with-window (win :title "Toor" :flags '(:shown))
+      (sdl2:with-window (win :title "Game" :flags '(:shown))
 	(sdl2:with-renderer (renderer win :flags '(:accelerated))
 	  (init-movement-sys game-time *level-1*)
 	  (init-collision-sys game-time)

@@ -1,4 +1,4 @@
-(in-package #:toor)
+(in-package #:cl-platform-game)
 
 (defstruct game-time
   (now (sdl2:get-performance-counter))

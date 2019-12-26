@@ -1,4 +1,4 @@
-(in-package #:toor)
+(in-package #:cl-platform-game)
 
 (defstruct camera
   (x 0)

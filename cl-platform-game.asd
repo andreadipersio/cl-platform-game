@@ -1,7 +1,5 @@
-;;;; toor.asd
-
-(asdf:defsystem #:toor
-  :description "Toor - Hackform Game"
+(asdf:defsystem #:cl-platform-game
+  :description "2d platform game in Common Lisp"
   :author "Andrea Di Persio <me@andreadipersio.com>"
   :license  "MIT"
   :version "0.0.1"
@@ -15,7 +13,7 @@
 	       :livesupport)
   :pathname "src"
   :components ((:file "package")
-               (:file "toor")
+               (:file "game")
 	       (:file "time")
 	       (:file "ecs")
 	       (:file "camera")

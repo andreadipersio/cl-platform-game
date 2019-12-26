@@ -1,5 +1,5 @@
 ;;;; package.lisp
 
-(defpackage #:toor
+(defpackage #:cl-platform-game
   (:use #:cl #:livesupport)
   (:export :main))

@@ -1,10 +1,10 @@
 ;;;; animation-assets.lisp
 
-(in-package #:toor)
+(in-package #:cl-platform-game)
 
 (defparameter *animation-sheets*
   (list (list :player (make-spritesheet
-		       :filepath (asdf:system-relative-pathname 'toor "assets/player-sheet.png")
+		       :filepath (asdf:system-relative-pathname 'cl-platform-game "assets/player-sheet.png")
 		       :width 50
 		       :height 37
 		       :frames-per-row 7))))
